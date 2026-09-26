@@ -178,7 +178,7 @@
     .poem-text {
       color: #2a2a28;
       font-family: 'Klee One', cursive, serif;
-      font-size: 1.05rem;
+      font-size: 0.88rem;
       font-weight: 600;
       line-height: 1.8;
       letter-spacing: 0.12em;
@@ -186,7 +186,7 @@
       opacity: 0;
       transition: opacity 1.5s ease-in-out;
       pointer-events: none;
-      max-width: 320px;
+      max-width: 360px;
     }
 
     .poem-text.visible {
@@ -216,6 +216,20 @@
   opacity: 0;
   transform: translateY(8px);
   pointer-events: none;
+}
+
+#concept-area .poem-text {
+  position: absolute;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  max-width: 360px;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+#concept-area .poem-text.visible {
+  opacity: 0.9;
+  transform: translateY(0);
 }
 
     /* レスポンシブ（画面幅が狭い場合） */
@@ -293,7 +307,7 @@
       <div class="timer-bar" id="timer-bar"></div>
     </div>
 
-    <!-- 右側：作品コンセプト -->
+    <!-- 右側：コンセプト / 再生中の詩 -->
     <div class="poem-right" id="concept-area">
       <div class="concept-text">
         <p>窓の外を眺めると、1本の木がある。</p>
@@ -302,6 +316,7 @@
         <p>10秒間、耳をすませ、目を閉じると、ずっと時を旅してきた音が、聞こえる。</p>
         <p>これは、ある9月の音のメッセージ。</p>
       </div>
+      <div class="poem-text" id="poem-text"></div>
     </div>
 
     <!-- 右下：作品情報 -->
@@ -370,8 +385,11 @@
         }
       });
 
-      // 3. コンセプトをフェードアウト
+      // 3. コンセプトを消し、再生中の詩を表示
       document.getElementById('concept-area').classList.add('is-hidden');
+      const poemEl = document.getElementById('poem-text');
+      poemEl.innerText = track.poem;
+      requestAnimationFrame(() => poemEl.classList.add('visible'));
 
       // 4. 音声の再生
       currentAudio = new Audio(track.audioSrc);
@@ -408,6 +426,7 @@
       if (resetTimeout) clearTimeout(resetTimeout);
 
       document.getElementById('concept-area').classList.add('is-hidden');
+      document.getElementById('poem-text').classList.remove('visible');
       document.getElementById('timer-bar').style.width = '0%';
     }
 
@@ -418,6 +437,7 @@
       document.getElementById('img-base').classList.add('active');
 
       document.querySelectorAll('.track-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('poem-text').classList.remove('visible');
       document.getElementById('concept-area').classList.remove('is-hidden');
     }
 
