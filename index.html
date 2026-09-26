@@ -4,25 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>10 SECONDS : THROUGH THE WINDOW - nora</title>
+
+  <!-- Google Fonts: 手書き風フォント (Klee One) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
-    /* 全体スタイリング：モダンギャラリーの空間ライティング（スポットライト効果） */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
     body {
-      /* 中央は光が当たる明るいニュアンスホワイト、外側へ向けてかすかな陰影 */
-      background: radial-gradient(circle at center, #f8f7f4 0%, #e8e6e0 100%);
+      /* 全体背景画像の設定 */
+      background: url('images/bg.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: #1a1a1a;
       font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      width: 100vw;
       overflow: hidden;
       user-select: none;
+      position: relative;
     }
 
     /* 左上：NORAロゴ＆コピー */
@@ -44,7 +48,7 @@
     .brand-tagline {
       font-size: 0.72rem;
       letter-spacing: 0.18em;
-      color: #70706d;
+      color: #555550;
       font-weight: 300;
     }
 
@@ -65,30 +69,75 @@
     .work-year {
       font-size: 0.72rem;
       letter-spacing: 0.12em;
-      color: #8c8c88;
+      color: #666660;
       margin-top: 3px;
     }
 
-    /* 中央：ギャラリー展示ステージ */
-    .gallery-stage {
+    /* === 全体レイアウト（左：ボタン / 中央：画像 / 右：テキスト） === */
+    .main-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 48px;
-      max-width: 90vw;
-      max-height: 72vh;
-      position: relative;
+      width: 90vw;
+      max-width: 1400px;
+      z-index: 5;
     }
 
-    /* 写真フレーム（壁に展示された額装作品） */
+    /* 1. 左側：6つのボタン領域（縦並び配置） */
+    .controls-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 20px;
+      padding-right: 40px;
+    }
+
+    .track-btn {
+      background: none;
+      border: none;
+      color: #666660;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      cursor: pointer;
+      padding: 6px 4px;
+      transition: all 0.35s ease;
+      position: relative;
+      text-align: right;
+    }
+
+    .track-btn:hover {
+      color: #1a1a1a;
+    }
+
+    .track-btn.active {
+      color: #1a1a1a;
+      font-weight: 500;
+    }
+
+    .track-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 1px;
+      background-color: #1a1a1a;
+    }
+
+    /* 2. 中央：画像領域（サイズ68vh・正方形そのまま） */
     .image-container {
       position: relative;
-      height: 60vh;
-      aspect-ratio: 9 / 16;
+      height: 68vh;
+      aspect-ratio: 1 / 1;
       background-color: #eae8e3;
-      /* ギャラリーの柔らかいスポットライトと壁面の影 */
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);
       overflow: hidden;
+      flex-shrink: 0;
     }
 
     .window-image {
@@ -106,126 +155,78 @@
       opacity: 1;
     }
 
-    /* 進行プログレスバー */
     .timer-bar {
       position: absolute;
       bottom: 0;
       left: 0;
       height: 2px;
-      background-color: rgba(26, 26, 26, 0.35);
+      background-color: rgba(26, 26, 26, 0.4);
       width: 0%;
       transition: width 0.1s linear;
       z-index: 6;
     }
 
-    /* 写真に被らない詩の表示領域（右側に縦書きで静かに配置） */
-    .poem-side-container {
-      width: 140px;
-      height: 52vh;
+    /* 3. 右側：詩（テキスト）領域（右側固定・横書き手書き風） */
+    .poem-right {
+      flex: 1;
+      padding-left: 40px;
       display: flex;
-      align-items: center;
       justify-content: flex-start;
+      align-items: center;
     }
 
     .poem-text {
-      color: #222220;
-      font-size: 0.88rem;
-      line-height: 2.3;
-      letter-spacing: 0.28em;
-      writing-mode: vertical-rl; /* 縦書きキャプション風 */
+      color: #2a2a28;
+      font-family: 'Klee One', cursive, serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.8;
+      letter-spacing: 0.12em;
+      writing-mode: horizontal-tb;
       opacity: 0;
       transition: opacity 1.5s ease-in-out;
+      pointer-events: none;
+      max-width: 320px;
     }
 
     .poem-text.visible {
-      opacity: 1;
+      opacity: 0.9;
     }
 
-    /* 下部：トラック選択コントロール */
-    .controls {
-      position: absolute;
-      bottom: 64px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px 32px;
-      z-index: 10;
-      padding: 0 20px;
-    }
-
-    .track-btn {
-      background: none;
-      border: none;
-      color: #8c8c88;
-      font-size: 0.72rem;
-      letter-spacing: 0.22em;
-      cursor: pointer;
-      padding: 6px 4px;
-      transition: all 0.35s ease;
-      position: relative;
-    }
-
-    .track-btn:hover {
-      color: #1a1a1a;
-    }
-
-    .track-btn.active {
-      color: #1a1a1a;
-      font-weight: 500;
-    }
-
-    .track-btn.active::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 1px;
-      background-color: #1a1a1a;
-    }
-
-    /* スマホ対応（縦画面） */
-    @media (max-width: 768px) {
-      .gallery-stage {
+    /* レスポンシブ（画面幅が狭い場合） */
+    @media (max-width: 900px) {
+      .main-container {
         flex-direction: column;
-        gap: 18px;
-        max-height: 65vh;
+        top: 52%;
+      }
+
+      .controls-left {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding-right: 0;
+        margin-bottom: 16px;
+        gap: 12px 20px;
+      }
+
+      .track-btn {
+        text-align: center;
       }
 
       .image-container {
-        height: 46vh;
+        height: 48vh;
       }
 
-      .poem-side-container {
-        width: 82vw;
-        height: 50px;
+      .poem-right {
+        padding-left: 0;
+        margin-top: 16px;
         justify-content: center;
       }
 
       .poem-text {
-        writing-mode: horizontal-tb;
-        font-size: 0.78rem;
-        line-height: 1.6;
+        font-size: 0.88rem;
         text-align: center;
-      }
-
-      .brand-header {
-        top: 20px;
-        left: 20px;
-      }
-
-      .work-info {
-        bottom: 20px;
-        right: 20px;
-      }
-
-      .controls {
-        bottom: 48px;
-        gap: 10px 16px;
-      }
-
-      .track-btn {
-        font-size: 0.68rem;
       }
     }
   </style>
@@ -245,9 +246,20 @@
     <div class="work-year">2026</div>
   </div>
 
-  <!-- 中央：モダンギャラリー展示ステージ -->
-  <div class="gallery-stage">
-    <!-- 写真作品（額装） -->
+  <!-- 主構造（左：ボタン / 中央：画像固定 / 右：テキスト固定） -->
+  <div class="main-container">
+    
+    <!-- 左側：6つのボタン（縦並び） -->
+    <div class="controls-left">
+      <button class="track-btn" onclick="playTrack('morning')">MORNING</button>
+      <button class="track-btn" onclick="playTrack('daytime')">DAYTIME</button>
+      <button class="track-btn" onclick="playTrack('wind')">WIND</button>
+      <button class="track-btn" onclick="playTrack('rain')">RAIN</button>
+      <button class="track-btn" onclick="playTrack('last_train')">LAST TRAIN</button>
+      <button class="track-btn" onclick="playTrack('night')">NIGHT</button>
+    </div>
+
+    <!-- 中央：画像（サイズ68vh・完全中央） -->
     <div class="image-container">
       <img src="images/base.jpg" alt="Window Base" class="window-image active" id="img-base">
       <img src="images/01_morning.jpg" alt="Morning" class="window-image" id="img-morning">
@@ -260,20 +272,11 @@
       <div class="timer-bar" id="timer-bar"></div>
     </div>
 
-    <!-- 写真の横に配置されるキャプション風の詩 -->
-    <div class="poem-side-container">
+    <!-- 右側：テキスト（横書き手書き風・右側領域に固定） -->
+    <div class="poem-right">
       <div class="poem-text" id="poem-text"></div>
     </div>
-  </div>
 
-  <!-- 下部：トラック選択ボタン -->
-  <div class="controls">
-    <button class="track-btn" onclick="playTrack('morning')">MORNING</button>
-    <button class="track-btn" onclick="playTrack('daytime')">DAYTIME</button>
-    <button class="track-btn" onclick="playTrack('wind')">WIND</button>
-    <button class="track-btn" onclick="playTrack('rain')">RAIN</button>
-    <button class="track-btn" onclick="playTrack('last_train')">LAST TRAIN</button>
-    <button class="track-btn" onclick="playTrack('night')">NIGHT</button>
   </div>
 
   <script>
@@ -325,7 +328,7 @@
       const targetImg = document.getElementById(track.imageId);
       if (targetImg) targetImg.classList.add('active');
 
-      // 2. ボタンアクティブ
+      // 2. ボタンアクティブ切り替え
       document.querySelectorAll('.track-btn').forEach(btn => {
         if (btn.getAttribute('onclick').includes(`'${key}'`)) {
           btn.classList.add('active');
@@ -334,7 +337,7 @@
         }
       });
 
-      // 3. 詩の表示（写真の横）
+      // 3. 詩の表示
       const poemEl = document.getElementById('poem-text');
       poemEl.innerText = track.poem;
       setTimeout(() => {
