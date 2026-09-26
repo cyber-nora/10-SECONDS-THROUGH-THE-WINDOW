@@ -12,12 +12,12 @@ body, html {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  
-  /* ↓ ここを背景画像に変更します */
-  background: url('images/bg.png') no-repeat center center fixed;
+
+  /* 背景画像を画面全体にカバーして固定 */
+  background: url('images/bg.jpg') no-repeat center center fixed;
   background-size: cover;
-  
-  color: #1a1a1a; /* 背景に合わせて文字色も少し濃いめに見やすく修正 */
+
+  color: #1a1a1a; /* 壁紙の明るさに合わせて文字色をダークグレーに調整 */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   user-select: none;
 }
