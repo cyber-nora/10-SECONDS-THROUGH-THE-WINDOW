@@ -12,12 +12,15 @@ body, html {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #0d0e10;
-  color: #e0e0e0;
+  
+  /* ↓ ここを背景画像に変更します */
+  background: url('images/bg.png') no-repeat center center fixed;
+  background-size: cover;
+  
+  color: #1a1a1a; /* 背景に合わせて文字色も少し濃いめに見やすく修正 */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   user-select: none;
 }
-
 .viewport {
   position: relative;
   width: 100%;
