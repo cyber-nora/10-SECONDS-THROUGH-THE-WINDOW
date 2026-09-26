@@ -14,7 +14,7 @@ body, html {
   overflow: hidden;
 
   /* 背景画像を画面全体にカバーして固定 */
-  background: url('images/bg.jpg') no-repeat center center fixed;
+  background: url('images/bg.png') no-repeat center center fixed;
   background-size: cover;
 
   color: #1a1a1a; /* 壁紙の明るさに合わせて文字色をダークグレーに調整 */
