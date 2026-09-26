@@ -193,6 +193,31 @@
       opacity: 0.9;
     }
 
+
+
+/* === コンセプト表示 / ポップアップ === */
+.concept-text {
+  color: #2a2a28;
+  font-family: 'Klee One', cursive, serif;
+  font-size: 0.88rem;
+  font-weight: 400;
+  line-height: 1.85;
+  letter-spacing: 0.08em;
+  max-width: 360px;
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+
+.concept-text p + p {
+  margin-top: 1.2em;
+}
+
+#concept-area.is-hidden .concept-text {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
     /* レスポンシブ（画面幅が狭い場合） */
     @media (max-width: 900px) {
       .main-container {
@@ -242,12 +267,6 @@
     <span class="brand-tagline">音は、時代を旅する。</span>
   </div>
 
-  <!-- 右下：作品情報 -->
-  <div class="work-info">
-    <div class="work-title">10 SECONDS : THROUGH THE WINDOW</div>
-    <div class="work-year">2026</div>
-  </div>
-
   <!-- 主構造（左：ボタン / 中央：画像固定 / 右：テキスト固定） -->
   <div class="main-container">
     
@@ -274,9 +293,21 @@
       <div class="timer-bar" id="timer-bar"></div>
     </div>
 
-    <!-- 右側：テキスト（横書き手書き風・右側領域に固定） -->
-    <div class="poem-right">
-      <div class="poem-text" id="poem-text"></div>
+    <!-- 右側：作品コンセプト -->
+    <div class="poem-right" id="concept-area">
+      <div class="concept-text">
+        <p>窓の外を眺めると、1本の木がある。</p>
+        <p>いつもそこにあるのに、同じ姿を見せることはない。</p>
+        <p>それは、この木が奏でるサウンドスケープ。</p>
+        <p>10秒間、耳をすませ、目を閉じると、ずっと時を旅してきた音が、聞こえる。</p>
+        <p>これは、ある9月の音のメッセージ。</p>
+      </div>
+    </div>
+
+    <!-- 右下：作品情報 -->
+    <div class="work-info">
+      <div class="work-title">10 SECONDS : THROUGH THE WINDOW</div>
+      <div class="work-year">2026</div>
     </div>
 
   </div>
@@ -339,15 +370,12 @@
         }
       });
 
-      // 3. 詩の表示
-      const poemEl = document.getElementById('poem-text');
-      poemEl.innerText = track.poem;
-      setTimeout(() => {
-        poemEl.classList.add('visible');
-      }, 300);
+      // 3. コンセプトをフェードアウト
+      document.getElementById('concept-area').classList.add('is-hidden');
 
       // 4. 音声の再生
       currentAudio = new Audio(track.audioSrc);
+      currentAudio.addEventListener('ended', resetToBase, { once: true });
       currentAudio.play().catch(e => console.log("Audio play error:", e));
 
       // 5. プログレスバー（10秒）
@@ -379,7 +407,7 @@
       if (timerInterval) clearInterval(timerInterval);
       if (resetTimeout) clearTimeout(resetTimeout);
 
-      document.getElementById('poem-text').classList.remove('visible');
+      document.getElementById('concept-area').classList.add('is-hidden');
       document.getElementById('timer-bar').style.width = '0%';
     }
 
@@ -390,7 +418,9 @@
       document.getElementById('img-base').classList.add('active');
 
       document.querySelectorAll('.track-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('concept-area').classList.remove('is-hidden');
     }
+
   </script>
 </body>
 </html>
