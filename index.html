@@ -5,20 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>10 SECONDS : THROUGH THE WINDOW - nora</title>
   <style>
-    /* 全体スタイリング */
+    /* 全体スタイリング：モダンギャラリーの空間ライティング（スポットライト効果） */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
     body {
-      background-color: #0d0d0d;
-      color: #e6e6e6;
+      /* 中央は光が当たる明るいニュアンスホワイト、外側へ向けてかすかな陰影 */
+      background: radial-gradient(circle at center, #f8f7f4 0%, #e8e6e0 100%);
+      color: #1a1a1a;
       font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
       height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       overflow: hidden;
       user-select: none;
@@ -27,8 +28,8 @@
     /* 左上：NORAロゴ＆コピー */
     .brand-header {
       position: absolute;
-      top: 24px;
-      left: 24px;
+      top: 32px;
+      left: 36px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -36,55 +37,57 @@
       z-index: 10;
     }
     .brand-logo {
-      height: 28px;
+      height: 24px;
       width: auto;
       object-fit: contain;
     }
     .brand-tagline {
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      color: #a0a0a0;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: #70706d;
       font-weight: 300;
     }
 
     /* 右下：作品名＆制作年 */
     .work-info {
       position: absolute;
-      bottom: 24px;
-      right: 24px;
+      bottom: 32px;
+      right: 36px;
       text-align: right;
       z-index: 10;
     }
     .work-title {
-      font-size: 0.85rem;
-      letter-spacing: 0.2em;
-      color: #cccccc;
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      color: #2c2c2a;
       font-weight: 400;
     }
     .work-year {
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      color: #777777;
-      margin-top: 2px;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: #8c8c88;
+      margin-top: 3px;
     }
 
-    /* 中央：メインディスプレイ（画像＋詩） */
-    .viewport {
-      position: relative;
-      width: 100%;
-      height: 100vh;
+    /* 中央：ギャラリー展示ステージ */
+    .gallery-stage {
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      gap: 48px;
+      max-width: 90vw;
+      max-height: 72vh;
+      position: relative;
     }
 
+    /* 写真フレーム（壁に展示された額装作品） */
     .image-container {
       position: relative;
-      width: 85vw;
-      max-width: 500px;
+      height: 60vh;
       aspect-ratio: 9 / 16;
-      max-height: 70vh;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+      background-color: #eae8e3;
+      /* ギャラリーの柔らかいスポットライトと壁面の影 */
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
       overflow: hidden;
     }
 
@@ -92,7 +95,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: opacity 1.5s ease-in-out;
+      transition: opacity 1.2s ease-in-out;
       position: absolute;
       top: 0;
       left: 0;
@@ -103,107 +106,126 @@
       opacity: 1;
     }
 
-    /* 10秒の詩（オーバーレイ表示） */
-    .poem-overlay {
+    /* 進行プログレスバー */
+    .timer-bar {
       position: absolute;
-      top: 0;
+      bottom: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      height: 2px;
+      background-color: rgba(26, 26, 26, 0.35);
+      width: 0%;
+      transition: width 0.1s linear;
+      z-index: 6;
+    }
+
+    /* 写真に被らない詩の表示領域（右側に縦書きで静かに配置） */
+    .poem-side-container {
+      width: 140px;
+      height: 52vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 30px;
-      box-sizing: border-box;
-      background: rgba(0, 0, 0, 0.25);
-      z-index: 5;
-      pointer-events: none;
+      justify-content: flex-start;
     }
 
     .poem-text {
-      color: #ffffff;
-      font-size: 0.95rem;
-      line-height: 2.2;
-      letter-spacing: 0.25em;
-      text-align: center;
-      writing-mode: vertical-rl; /* 縦書きで文学的な雰囲気に */
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+      color: #222220;
+      font-size: 0.88rem;
+      line-height: 2.3;
+      letter-spacing: 0.28em;
+      writing-mode: vertical-rl; /* 縦書きキャプション風 */
       opacity: 0;
-      transition: opacity 2s ease-in-out;
+      transition: opacity 1.5s ease-in-out;
     }
 
     .poem-text.visible {
       opacity: 1;
     }
 
-    /* カウントダウン表示（微かに可視化） */
-    .timer-bar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      background-color: rgba(255, 255, 255, 0.5);
-      width: 0%;
-      transition: width 0.1s linear;
-      z-index: 6;
-    }
-
     /* 下部：トラック選択コントロール */
     .controls {
       position: absolute;
-      bottom: 60px;
+      bottom: 64px;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 16px 24px;
+      gap: 16px 32px;
       z-index: 10;
       padding: 0 20px;
-      max-width: 600px;
     }
 
     .track-btn {
       background: none;
       border: none;
-      color: #888888;
-      font-size: 0.75rem;
-      letter-spacing: 0.2em;
+      color: #8c8c88;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
       cursor: pointer;
-      padding: 6px 12px;
-      transition: all 0.4s ease;
+      padding: 6px 4px;
+      transition: all 0.35s ease;
       position: relative;
     }
 
     .track-btn:hover {
-      color: #ffffff;
+      color: #1a1a1a;
     }
 
     .track-btn.active {
-      color: #ffffff;
+      color: #1a1a1a;
+      font-weight: 500;
     }
 
     .track-btn.active::after {
       content: "";
       position: absolute;
       bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 12px;
+      left: 0;
+      width: 100%;
       height: 1px;
-      background-color: #ffffff;
+      background-color: #1a1a1a;
     }
 
-    /* スマホ調整 */
-    @media (max-width: 600px) {
-      .controls {
-        bottom: 70px;
-        gap: 12px 16px;
+    /* スマホ対応（縦画面） */
+    @media (max-width: 768px) {
+      .gallery-stage {
+        flex-direction: column;
+        gap: 18px;
+        max-height: 65vh;
       }
-      .track-btn {
-        font-size: 0.7rem;
-        padding: 4px 8px;
+
+      .image-container {
+        height: 46vh;
       }
+
+      .poem-side-container {
+        width: 82vw;
+        height: 50px;
+        justify-content: center;
+      }
+
       .poem-text {
-        font-size: 0.85rem;
+        writing-mode: horizontal-tb;
+        font-size: 0.78rem;
+        line-height: 1.6;
+        text-align: center;
+      }
+
+      .brand-header {
+        top: 20px;
+        left: 20px;
+      }
+
+      .work-info {
+        bottom: 20px;
+        right: 20px;
+      }
+
+      .controls {
+        bottom: 48px;
+        gap: 10px 16px;
+      }
+
+      .track-btn {
+        font-size: 0.68rem;
       }
     }
   </style>
@@ -213,7 +235,7 @@
   <!-- 左上：NORAロゴ＆コピー -->
   <div class="brand-header">
     <img src="images/logo.png" alt="nora" class="brand-logo" id="logo-img" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';">
-    <span id="logo-fallback" style="display:none; font-weight:bold; font-size:1.1rem; letter-spacing:0.15em;">nora</span>
+    <span id="logo-fallback" style="display:none; font-weight:bold; font-size:1.1rem; letter-spacing:0.15em; color:#1a1a1a;">nora</span>
     <span class="brand-tagline">音は、時代を旅する。</span>
   </div>
 
@@ -223,13 +245,11 @@
     <div class="work-year">2026</div>
   </div>
 
-  <!-- 中央：窓と景色ディスプレイ -->
-  <div class="viewport">
+  <!-- 中央：モダンギャラリー展示ステージ -->
+  <div class="gallery-stage">
+    <!-- 写真作品（額装） -->
     <div class="image-container">
-      <!-- ベース画像 -->
       <img src="images/base.jpg" alt="Window Base" class="window-image active" id="img-base">
-      
-      <!-- 各トラック用画像 -->
       <img src="images/01_morning.jpg" alt="Morning" class="window-image" id="img-morning">
       <img src="images/02_daytime.jpg" alt="Daytime" class="window-image" id="img-daytime">
       <img src="images/03_wind.jpg" alt="Wind" class="window-image" id="img-wind">
@@ -237,13 +257,12 @@
       <img src="images/05_last_train.jpg" alt="Last Train" class="window-image" id="img-last_train">
       <img src="images/06_night.jpg" alt="Night" class="window-image" id="img-night">
 
-      <!-- 10秒の詩（オーバレイ） -->
-      <div class="poem-overlay">
-        <div class="poem-text" id="poem-text"></div>
-      </div>
-
-      <!-- 進行プログレスバー -->
       <div class="timer-bar" id="timer-bar"></div>
+    </div>
+
+    <!-- 写真の横に配置されるキャプション風の詩 -->
+    <div class="poem-side-container">
+      <div class="poem-text" id="poem-text"></div>
     </div>
   </div>
 
@@ -258,10 +277,6 @@
   </div>
 
   <script>
-    // ==========================================
-    // トラック設定（画像・音源・詩）
-    // 後からテキストやファイル名を簡単に編集できます
-    // ==========================================
     const tracks = {
       'morning': {
         imageId: 'img-morning',
@@ -298,22 +313,19 @@
     let currentAudio = null;
     let timerInterval = null;
     let resetTimeout = null;
-    let activeTrackKey = null;
 
     function playTrack(key) {
-      // 停止・初期化処理
       stopCurrent();
 
-      activeTrackKey = key;
       const track = tracks[key];
       if (!track) return;
 
-      // 1. 画像の切り替え（フェードイン）
+      // 1. 画像切り替え
       document.querySelectorAll('.window-image').forEach(img => img.classList.remove('active'));
       const targetImg = document.getElementById(track.imageId);
       if (targetImg) targetImg.classList.add('active');
 
-      // 2. ボタンアクティブ状態の設定
+      // 2. ボタンアクティブ
       document.querySelectorAll('.track-btn').forEach(btn => {
         if (btn.getAttribute('onclick').includes(`'${key}'`)) {
           btn.classList.add('active');
@@ -322,22 +334,22 @@
         }
       });
 
-      // 3. 詩の表示
+      // 3. 詩の表示（写真の横）
       const poemEl = document.getElementById('poem-text');
       poemEl.innerText = track.poem;
       setTimeout(() => {
         poemEl.classList.add('visible');
-      }, 500); // 0.5秒後にじわっと表示
+      }, 300);
 
       // 4. 音声の再生
       currentAudio = new Audio(track.audioSrc);
       currentAudio.play().catch(e => console.log("Audio play error:", e));
 
-      // 5. プログレスバー（10秒アニメーション）
+      // 5. プログレスバー（10秒）
       const progressBar = document.getElementById('timer-bar');
       progressBar.style.width = '0%';
       let elapsed = 0;
-      const duration = 10000; // 10秒
+      const duration = 10000;
 
       timerInterval = setInterval(() => {
         elapsed += 100;
@@ -348,7 +360,7 @@
         }
       }, 100);
 
-      // 6. 10秒後に初期状態（base.jpg）へ静かに復帰
+      // 6. 10秒後リセット
       resetTimeout = setTimeout(() => {
         resetToBase();
       }, 10000);
@@ -369,13 +381,10 @@
     function resetToBase() {
       stopCurrent();
       
-      // 画像をbaseに戻す
       document.querySelectorAll('.window-image').forEach(img => img.classList.remove('active'));
       document.getElementById('img-base').classList.add('active');
 
-      // ボタンのアクティブ解除
       document.querySelectorAll('.track-btn').forEach(btn => btn.classList.remove('active'));
-      activeTrackKey = null;
     }
   </script>
 </body>
